@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProEventos.API.Data;
 using ProEventos.API.Models;
 
 namespace ProEventos.API.Controllers
@@ -12,60 +13,35 @@ namespace ProEventos.API.Controllers
     [Route("api/[controller]")]
     public class EventoController : ControllerBase
     {
-      
-        public IEnumerable<Evento> _evento = new Evento[] {
-                new Evento () {
-                    EventoId = 1,
-                    Tema = "Angular e .NET",
-                    Local = "Vitoria da Conquista",
-                    Lote = "1 lote",
-                    QuantPessoas = 120,
-                    DataEvento = DateTime.Now.AddDays(2).ToString(),
-                    ImagemUrl = "aa"
-                },
-                 new Evento () {
-                    EventoId = 2,
-                    Tema = "Angular e .NET",
-                    Local = "Vitoria da Conquista",
-                    Lote = "1 lote",
-                    QuantPessoas = 120,
-                    DataEvento = DateTime.Now.AddDays(2).ToString(),
-                    ImagemUrl = "aa"
-                },
-                 new Evento () {
-                    EventoId = 3,
-                    Tema = "Angular e .NET",
-                    Local = "Vitoria da Conquista",
-                    Lote = "1 lote",
-                    QuantPessoas = 120,
-                    DataEvento = DateTime.Now.AddDays(2).ToString(),
-                    ImagemUrl = "aa"
-                }
-           };
+        private readonly DataContext _context;
+        public EventoController(DataContext context) {
+            this._context = context;
+        }
 
          [HttpGet("{id}")]
-        public IEnumerable<Evento> GetById(int id)
+        public Evento GetById(int id)
         {
-           return _evento.Where(evento => evento.EventoId == id);
+           return this._context.Eventos.FirstOrDefault(evento => evento.EventoId == id);
         }
 
           [HttpGet]
         public IEnumerable<Evento> Get()
         {
-           return _evento;
+           return this._context.Eventos;
         }
 
-        [HttpPost]
+        [HttpPost("evento")]
         public string Post() {
             return "exemplo de post";
         }
-        [HttpPut("{id}")]
-        public string Put(int id) {
-            return $"Exemplo de PUT com id = {id}";
+        [HttpPut("{id, evento}")]
+        public string Put(int id, Evento evento) {
+         //  _evento.Where(evento => evento.EventoId == id) = evento;
+            return $"O evento {id} foi editado com sucesso";
         }
         [HttpDelete("{id}")]
-        public string Delete(int id) {
-            return $"O Evento {id} foi excluido com sucesso";
+        public Evento Delete(int id) {
+            return this._context.Eventos.FirstOrDefault(evento => evento.EventoId == id);
         }
     }
 }
